@@ -1,0 +1,76 @@
+-- EduSphere Database Schema
+
+CREATE DATABASE IF NOT EXISTS edusphere;
+USE edusphere;
+
+-- Users table for authentication
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Courses table
+CREATE TABLE IF NOT EXISTS courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(100),
+    duration VARCHAR(50),
+    level VARCHAR(50),
+    image VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Contact submissions table
+CREATE TABLE IF NOT EXISTS contact_submissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subject VARCHAR(255),
+    message TEXT,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Admin table for admin authentication
+CREATE TABLE IF NOT EXISTS admin_login (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- User logins tracking table
+CREATE TABLE IF NOT EXISTS user_logins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- User course enrollments table
+CREATE TABLE IF NOT EXISTS user_courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    course_id INT NOT NULL,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+-- Insert sample courses
+INSERT INTO courses (title, description, category, duration, level, image) VALUES
+('Web Development Fundamentals', 'Learn HTML, CSS, JavaScript from scratch', 'Technology', '12 weeks', 'Beginner', 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg'),
+('Data Science & Analytics', 'Master data analysis and visualization', 'Technology', '16 weeks', 'Intermediate', 'https://images.pexels.com/photos/1181673/pexels-photo-1181673.jpeg'),
+('Digital Marketing', 'Complete digital marketing strategies', 'Business', '10 weeks', 'Beginner', 'https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg'),
+('Mobile App Development', 'Build iOS and Android applications', 'Technology', '14 weeks', 'Advanced', 'https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg'),
+('Graphic Design Mastery', 'Learn design principles and tools', 'Design', '8 weeks', 'Beginner', 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg'),
+('Business Management', 'Essential business management skills', 'Business', '12 weeks', 'Intermediate', 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg');
+
+-- Insert default admin account (username: admin, password: admin123)
+INSERT INTO admin_login (username, password, full_name, email) VALUES
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin User', 'admin@edusphere.com');
